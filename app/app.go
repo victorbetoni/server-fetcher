@@ -22,10 +22,16 @@ func Build() (app *cli.App) {
 
 	app.Commands = []cli.Command{
 		{
-			Name:  "ip",
-			Usage: "Fetch ipv4 address",
-			Flags: flags
+			Name:   "ip",
+			Usage:  "Fetch ipv4 address",
+			Flags:  flags,
 			Action: ip,
+		},
+		{
+			Name:   "servers",
+			Usage:  "Look for server names",
+			Flags:  flags,
+			Action: server,
 		},
 	}
 
@@ -33,14 +39,22 @@ func Build() (app *cli.App) {
 }
 
 func ip(context *cli.Context) {
-	host := context.String("host")
-
-	ips, err := net.LookupIP(host)
+	ips, err := net.LookupIP(context.String("host"))
 	if err != nil {
 		log.Fatal(err)
 	}
 
 	for _, ip := range ips {
 		fmt.Println(ip)
+	}
+}
+
+func server(context *cli.Context) {
+	servers, err := net.LookupNS(context.String("host"))
+	if err != nil {
+		log.Fatal(err)
+	}
+	for _, server := range servers {
+		fmt.Println(server)
 	}
 }
